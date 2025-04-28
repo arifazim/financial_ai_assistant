@@ -1,4 +1,4 @@
-# Financial AI Agent
+# Financial AI Assisant
 
 A powerful AI-powered assistant for financial services that uses Retrieval Augmented Generation (RAG) to provide accurate financial information and advice through multiple communication channels.
 
