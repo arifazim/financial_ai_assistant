@@ -1,0 +1,97 @@
+# Python virtual environments
+venv/
+env/
+ENV/
+fresh_venv/
+.env/
+.venv/
+virtualenv/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/
+*.egg
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IDE specific files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+.project
+.pydevproject
+.settings/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local development settings
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Model files (potentially large)
+models/*.bin
+models/*.pt
+models/*.pth
+models/*.onnx
+models/*.h5
+models/*.hdf5
+models/*.pb
+
+# Embeddings (can be regenerated)
+embeddings/*.pkl
+embeddings/*.npy
+embeddings/*.bin
+embeddings/*.vec
+
+# Docker
+.dockerignore
+
+# Sensitive information
+# Uncomment if you want to exclude config with sensitive info
+config.yaml
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~.nib

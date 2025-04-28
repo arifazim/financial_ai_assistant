@@ -1,0 +1,22 @@
+[
+    {
+      "question": "What investment services do you offer?",
+      "answer": "We offer a comprehensive range of investment services including: stocks and bonds trading, mutual funds, ETFs, retirement planning (401k, IRA), wealth management, and personalized portfolio advisory services."
+    },
+    {
+      "question": "What are your fees for investment services?",
+      "answer": "Our fees vary by service: Trading commission is $0 for stocks/ETFs, Managed portfolios have a 0.25% annual fee, Advisory services start at 0.75% annually. Contact us for a detailed fee schedule."
+    },
+    {
+      "question": "How do I start investing with you?",
+      "answer": "To start investing: 1) Create an account online or talk to an advisor, 2) Choose your investment strategy, 3) Fund your account, 4) Begin investing with our guidance."
+    },
+    {
+      "question": "How do I reset my password?",
+      "answer": "To reset your password, go to the login page and click 'Forgot Password'. Follow the instructions sent to your email."
+    },
+    {
+      "question": "How can I contact support?",
+      "answer": "You can contact support via email at support@yourcompany.com or through our live chat."
+    }
+  ]

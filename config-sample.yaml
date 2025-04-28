@@ -1,0 +1,29 @@
+# Configuration file 
+server:
+  host: "127.0.0.1"
+  port: 8000
+
+database:
+  embeddings_path: "data/embeddings.pkl"
+  knowledge_base_path: "data/knowledge_base.json"
+
+llm:
+  model: "google/flan-t5-small"
+
+security:
+  enable_validation: true
+  max_query_length: 500
+
+integrations:
+  whatsapp:
+    enabled: true  # Set to true to enable
+    twilio_account_sid: ""  # Your Twilio Account SID
+    twilio_auth_token: "" # Your Twilio Auth Token
+    from_number: ""  # Your Twilio WhatsApp number
+    recipient_number: ""  # Default recipient number
+  email:
+    enabled: true  # Set to true to enable
+    sender_email: ""  # Your email
+    smtp_server: ""
+    smtp_port: 587
+    smtp_password: ""  # Your app-specific password
