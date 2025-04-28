@@ -65,7 +65,7 @@ fin_ai_agent/
 │   ├── integrations.py      # (5) WhatsApp, Email, Live Chat Integration
 │   ├── security.py          # AI safety and compliance checks
 │── requirements.txt         # Python dependencies
-│── config.yaml              # Configuration file
+│── config.yaml              # Configuration file (** rename config-sample.yaml to config.yaml)
 │── README.md                # Documentation
 │── Dockerfile               # Docker configuration
 │── docker-compose.yml       # Docker Compose configuration
