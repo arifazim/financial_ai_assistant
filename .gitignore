@@ -80,6 +80,7 @@ embeddings/*.vec
 # Sensitive information
 # Uncomment if you want to exclude config with sensitive info
 config.yaml
+config-clean.yaml
 
 # OS generated files
 .DS_Store

@@ -4,15 +4,7 @@ server:
   port: 8000
 
 database:
-  embeddings_path: "data/embeddings.pkl"
   knowledge_base_path: "data/knowledge_base.json"
-
-llm:
-  model: "google/flan-t5-small"
-
-security:
-  enable_validation: true
-  max_query_length: 500
 
 integrations:
   whatsapp:
