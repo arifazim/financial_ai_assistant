@@ -216,6 +216,76 @@ This architecture enables our financial assistant to quickly find the most seman
    - API documentation: http://127.0.0.1:8000/docs
    - Test endpoint: http://127.0.0.1:8000/
 
+## Using the API
+
+### Modern UI Interface
+
+We've included a modern web interface to test the Financial AI Assistant without using command line tools:
+
+```
+# Start the API server
+uvicorn src.main:app --host 127.0.0.1 --port 8000
+
+# Open the UI in your browser
+open ui/index.html
+```
+![Financial AI Assistant UI](./images/fin-chat.png)
+
+# Synced with knowledge base indexed in FAISS
+![Financial AI Assistant UI with FAISS](./images/sync-with-chat.png)
+
+The UI provides:
+- A chat-like interface for sending queries
+- Channel selection (Chat, WhatsApp, Email)
+- Recipient input for WhatsApp and Email channels
+- API URL configuration
+- Real-time responses from the Financial AI Assistant
+
+### Example 
+```bash
+curl -X 'POST' \
+  'http://127.0.0.1:8000/ask' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "query": "What happens if the market crashes?",
+  "channel": "chat"
+}'
+{"response":"Here's what I found about 'What happens if the market crashes?':\n\nWe recommend a diversified long-term investment strategy. Our advisory team is available to help you adjust your portfolio as needed during market volatility.\n\nWe offer a comprehensive range of investment services including: stocks and bonds trading, mutual funds, ETFs, retirement planning (401k, IRA), wealth management, and personalized portfolio advisory services.\n\nTo start investing: 1) Create an account online or talk to an advisor, 2) Choose your investment strategy, 3) Fund your account, 4) Begin investing with our guidance.\n\nSource: FAQ"}
+```
+
+### Making Requests
+
+```bash
+# Chat channel example
+curl -X 'POST' \
+  'http://127.0.0.1:8000/ask' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "query": "What are the benefits of a Roth IRA?",
+  "channel": "chat"
+}'
+
+# WhatsApp channel example
+curl -X 'POST' \
+  'http://127.0.0.1:8000/ask' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "query": "What are your investment services?",
+  "channel": "whatsapp",
+  "recipient": "+1234567890"
+}'
+
+# Email channel example
+curl -X 'POST' \
+  'http://127.0.0.1:8000/ask' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "query": "How do I open an account?",
+  "channel": "email",
+  "recipient": "customer@example.com"
+}'
+```
+
 ## Docker Deployment
 
 1. **Build the Docker image**
@@ -254,52 +324,6 @@ This architecture enables our financial assistant to quickly find the most seman
 1. Push Docker image to Azure Container Registry
 2. Deploy using Azure Container Instances or AKS
 3. Set up API Management
-
-## Using the API
-
-### Example 
-```bash
-curl -X 'POST' \
-  'http://127.0.0.1:8000/ask' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "query": "What happens if the market crashes?",
-  "channel": "chat"
-}'
-{"response":"Here's what I found about 'What happens if the market crashes?':\n\nWe recommend a diversified long-term investment strategy. Our advisory team is available to help you adjust your portfolio as needed during market volatility.\n\nWe offer a comprehensive range of investment services including: stocks and bonds trading, mutual funds, ETFs, retirement planning (401k, IRA), wealth management, and personalized portfolio advisory services.\n\nTo start investing: 1) Create an account online or talk to an advisor, 2) Choose your investment strategy, 3) Fund your account, 4) Begin investing with our guidance.\n\nSource: FAQ"}
-```
-### Making Requests
-
-```bash
-# Chat channel example
-curl -X 'POST' \
-  'http://127.0.0.1:8000/ask' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "query": "What are the benefits of a Roth IRA?",
-  "channel": "chat"
-}'
-
-# WhatsApp channel example
-curl -X 'POST' \
-  'http://127.0.0.1:8000/ask' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "query": "What are your investment services?",
-  "channel": "whatsapp",
-  "recipient": "+1234567890"
-}'
-
-# Email channel example
-curl -X 'POST' \
-  'http://127.0.0.1:8000/ask' \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "query": "How do I open an account?",
-  "channel": "email",
-  "recipient": "customer@example.com"
-}'
-```
 
 ## Enhancement Opportunities
 

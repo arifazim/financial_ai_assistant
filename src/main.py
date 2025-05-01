@@ -5,12 +5,22 @@ import yaml
 os.environ["TOKENIZERS_PARALLELISM"] = "false"  # Prevent tokenizers warning
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware  # Import CORS middleware
 from pydantic import BaseModel
 from src.retrieval import retrieve_relevant_data
 from src.fin_engine import generate_response
 from src.integrations import send_response_to_channel
 
 app = FastAPI()
+
+# Add CORS middleware to allow browser requests
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 # Load config for default values
 with open("config.yaml", "r") as f:
