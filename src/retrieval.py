@@ -1,8 +1,16 @@
 # Improved semantic search with better relevance scoring
 ##### src/retrieval.py #####
-from src.knowledge_base import load_knowledge_base
+from src.knowledge_base import load_knowledge_base, embed_text, search
 
 def retrieve_relevant_data(query: str, top_k=3):
+    # First try vector-based search using FAISS
+    vector_results = search(query, k=top_k)
+    
+    # If we got results from vector search, return them
+    if vector_results:
+        return vector_results
+    
+    # Fallback to keyword-based search if vector search returns no results
     knowledge_data = load_knowledge_base()
     
     # Split query into keywords for better matching
@@ -25,11 +33,11 @@ def retrieve_relevant_data(query: str, top_k=3):
         
         # Check for individual keyword matches
         for keyword in query_keywords:
-            if keyword in text:
+            if keyword in text and len(keyword) > 2:  # Only consider keywords with length > 2
                 score += 1
                 
                 # Give extra weight to important financial terms
-                if keyword in ['ira', 'roth', '401k', 'retirement', 'investment', 'fund', 'stock', 'bond']:
+                if keyword in ['ira', 'roth', '401k', 'retirement', 'investment', 'fund', 'stock', 'bond', 'fee', 'fees', 'commission', 'cost']:
                     score += 2
                     
                 # Give extra weight to titles/questions

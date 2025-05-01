@@ -54,13 +54,24 @@ Note: This is general information. Please consult with our financial advisors fo
         try:
             # If we have context items
             if isinstance(context, list) and context:
-                # Extract relevant information from context
-                if len(context) == 1:
-                    # If only one item, use it directly
-                    answer = self._format_single_response(query, context[0])
+                # Check if the results come from vector search (will have 'score' field)
+                vector_search = any('score' in item for item in context)
+                
+                if vector_search:
+                    # For vector search results, use semantic relevance
+                    relevant_items = self._filter_by_vector_relevance(context)
+                    if relevant_items:
+                        answer = self._format_combined_response(query, relevant_items)
+                    else:
+                        answer = self._get_fallback_response(query)
                 else:
-                    # If multiple items, combine them
-                    answer = self._format_combined_response(query, context)
+                    # For keyword search results
+                    if len(context) == 1:
+                        # If only one item, use it directly
+                        answer = self._format_single_response(query, context[0])
+                    else:
+                        # If multiple items, combine them
+                        answer = self._format_combined_response(query, context)
             else:
                 # No relevant information found, try fallback information
                 answer = self._get_fallback_response(query)
@@ -70,6 +81,25 @@ Note: This is general information. Please consult with our financial advisors fo
             answer = f"Error generating response: {str(e)}"
         
         return validate_response(answer)
+    
+    def _filter_by_vector_relevance(self, items):
+        """Filter vector search results by relevance score"""
+        # Only keep items with a score below a threshold (lower is better in L2 distance)
+        # The threshold depends on the embedding model and may need tuning
+        # For all-MiniLM-L6-v2 with L2 distance, a higher threshold is needed
+        relevant_items = [item for item in items if item.get('score', float('inf')) < 20.0]
+        
+        # Print debug info
+        print(f"Vector search found {len(items)} items, {len(relevant_items)} are below threshold")
+        for item in items:
+            if 'text' in item and 'score' in item:
+                preview = item['text'][:50].replace('\n', ' ')
+                print(f"Item score: {item['score']:.4f}, text: '{preview}...'")
+        
+        # Sort by score (lower is better)
+        relevant_items.sort(key=lambda x: x.get('score', float('inf')))
+        
+        return relevant_items
     
     def _format_single_response(self, query, item):
         """Format a response from a single knowledge base item"""
@@ -98,9 +128,11 @@ Note: This is general information. Please consult with our financial advisors fo
     def _format_combined_response(self, query, items):
         """Format a response from multiple knowledge base items"""
         response_parts = []
+        sources = set()
         
         for item in items:
             text = item['text']
+            sources.add(item.get('source', 'Knowledge Base'))
             
             # If it's a FAQ (Q&A format)
             if text.startswith("Q:"):
@@ -109,18 +141,19 @@ Note: This is general information. Please consult with our financial advisors fo
                     question = parts[0].replace("Q:", "").strip()
                     answer = parts[1].strip()
                     
-                    # Only include if relevant
-                    if self._is_relevant_to_query(query, question, answer):
+                    # For vector search results, we already filtered by relevance
+                    if 'score' in item or self._is_relevant_to_query(query, question, answer):
                         response_parts.append(answer)
             else:
-                # Only include if relevant
-                if self._is_relevant_to_query(query, "", text):
+                # For vector search results, we already filtered by relevance
+                if 'score' in item or self._is_relevant_to_query(query, "", text):
                     response_parts.append(text)
         
         # If we have relevant parts, use them
         if response_parts:
             combined = "\n\n".join(response_parts)
-            return f"Here's what I found about '{query}':\n\n{combined}\n\nSource: Financial Knowledge Base"
+            source_text = ", ".join(sources)
+            return f"Here's what I found about '{query}':\n\n{combined}\n\nSource: {source_text}"
         else:
             # If no relevant parts, use fallback
             return self._get_fallback_response(query)
@@ -134,7 +167,7 @@ Note: This is general information. Please consult with our financial advisors fo
         query_terms = set(re.findall(r'\b\w+\b', query_lower))
         
         # Check for key financial terms in both query and response
-        financial_terms = ['ira', 'roth', '401k', 'retirement', 'investment', 'fund', 'stock', 'bond']
+        financial_terms = ['ira', 'roth', '401k', 'retirement', 'investment', 'fund', 'stock', 'bond', 'fee', 'fees', 'commission', 'cost']
         query_fin_terms = [term for term in financial_terms if term in query_lower]
         
         # If query has financial terms, make sure at least one is in the response

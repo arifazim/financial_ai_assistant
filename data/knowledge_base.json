@@ -20,11 +20,43 @@
     "source": "FAQ"
   },
   {
-    "text": "Setting up your account\nTo set up your account, follow these steps:...",
+    "text": "Q: Is my personal information secure with your platform?\nA: Yes, we use bank-level encryption and multi-factor authentication to ensure your data and transactions are protected at all times.",
+    "source": "FAQ"
+  },
+  {
+    "text": "Q: Can I transfer my existing investments to your platform?\nA: Yes, you can initiate an account transfer from your existing broker using our automated ACAT system. This typically takes 5–7 business days.",
+    "source": "FAQ"
+  },
+  {
+    "text": "Setting up your account\nTo set up your account, follow these steps: Visit our website, click 'Sign Up', provide your personal and financial details, and verify your identity through our secure KYC process.",
     "source": "Help Article"
   },
   {
-    "text": "Troubleshooting login issues\nIf you experience login issues, try clearing your browser cache or resetting your password.",
+    "text": "Troubleshooting login issues\nIf you experience login issues, try clearing your browser cache, disabling browser extensions, or resetting your password. Ensure cookies are enabled in your browser.",
     "source": "Help Article"
+  },
+  {
+    "text": "Understanding your portfolio dashboard\nYour portfolio dashboard provides a real-time overview of your holdings, performance metrics, recent transactions, and personalized investment insights.",
+    "source": "Help Article"
+  },
+  {
+    "text": "Withdrawing funds from your account\nTo withdraw funds, navigate to the 'Transfers' section, select 'Withdraw', choose your linked bank account, and enter the desired amount. Transfers may take 1–3 business days.",
+    "source": "Help Article"
+  },
+  {
+    "text": "Updating your contact information\nTo update your contact details, log in to your account, go to 'Settings', and select 'Personal Info'. Make sure to save changes before exiting.",
+    "source": "Help Article"
+  },
+  {
+    "text": "Mobile app not syncing data\nIf the mobile app is not syncing, ensure you have a stable internet connection. Try force closing the app, clearing the app cache, or reinstalling it from the App Store or Google Play.",
+    "source": "Help Article"
+  },
+  {
+    "text": "Q: What happens if the market crashes?\nA: We recommend a diversified long-term investment strategy. Our advisory team is available to help you adjust your portfolio as needed during market volatility.",
+    "source": "FAQ"
+  },
+  {
+    "text": "Q: Do you offer tax-loss harvesting?\nA: Yes, our managed portfolios include automated tax-loss harvesting to help offset your capital gains and optimize your tax outcomes.",
+    "source": "FAQ"
   }
 ]

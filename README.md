@@ -1,4 +1,4 @@
-# Financial AI Assisant
+# Financial AI Agent
 
 A powerful AI-powered assistant for financial services that uses Retrieval Augmented Generation (RAG) to provide accurate financial information and advice through multiple communication channels.
 
@@ -53,7 +53,7 @@ The Financial AI Agent follows this workflow:
 ## Project Structure
 
 ```
-fin_ai_agent/
+financial_ai_agent/
 │── models/                  # Stores the AI model (if using local LLM)
 │── data/                    # Stores FAQs, PDFs, Help Articles
 │── embeddings/              # Vectorized knowledge base
@@ -64,12 +64,111 @@ fin_ai_agent/
 │   ├── fin_engine.py        # (3) Generate AI Response using RAG + LLM
 │   ├── integrations.py      # (5) WhatsApp, Email, Live Chat Integration
 │   ├── security.py          # AI safety and compliance checks
-│── requirements.txt         # Python dependencies
-│── config.yaml              # Configuration file (** rename config-sample.yaml to config.yaml)
+│── packages.txt         # Python dependencies
+│── config.yaml              # Configuration file
 │── README.md                # Documentation
 │── Dockerfile               # Docker configuration
 │── docker-compose.yml       # Docker Compose configuration
 ```
+
+## Technical Architecture
+
+### Embedding Model: all-MiniLM-L6-v2
+
+The Financial AI Assistant uses the `all-MiniLM-L6-v2` model for generating text embeddings, which offers an optimal balance of performance and efficiency:
+
+#### Why all-MiniLM-L6-v2?
+
+- **Efficiency**: Produces 384-dimensional embeddings (compared to larger models with 768+ dimensions)
+- **Performance**: Achieves 80.2% accuracy on the Semantic Textual Similarity Benchmark (STS-B)
+- **Speed**: 2-3x faster than larger models like BERT-base
+- **Size**: Only 80MB, making it suitable for deployment in resource-constrained environments
+- **Versatility**: Trained on over 1 billion sentence pairs across multiple domains
+
+```
+┌─────────────────────────────────────┐
+│         all-MiniLM-L6-v2            │
+├─────────────────────────────────────┤
+│ ┌───────────────┐  ┌───────────────┐│
+│ │  6 Layers of  │  │ 384-dimension ││
+│ │ Transformer   │→ │   Embedding   ││
+│ │ Architecture  │  │    Vectors    ││
+│ └───────────────┘  └───────────────┘│
+└─────────────────────────────────────┘
+```
+
+The model was created using knowledge distillation from larger models, preserving semantic understanding while reducing computational requirements. This makes it ideal for our financial assistant which needs to quickly understand and match user queries with relevant knowledge base entries.
+
+### FAISS Vector Indexing for RAG
+
+FAISS (Facebook AI Similarity Search) provides efficient similarity search and clustering of dense vectors. Our implementation uses it to power the Retrieval Augmented Generation (RAG) system:
+
+#### How FAISS Indexing Works in Our System
+
+```
+┌───────────────────────────────────────────────────────────────────────┐
+│                       FAISS Vector Indexing Process                   │
+├───────────────────────────────────────────────────────────────────────┤
+│                                                                       │
+│  ┌──────────────┐    ┌──────────────┐    ┌──────────────────────┐     │
+│  │ Knowledge    │    │ all-MiniLM   │    │ FAISS IndexFlatL2    │     │
+│  │ Base Entries │ →  │ Embedding    │ →  │ (L2 Distance Index)  │     │
+│  │              │    │ Model        │    │                      │     │
+│  └──────────────┘    └──────────────┘    └──────────────────────┘     │
+│         ▲                                           │                 │
+│         │                                           ▼                 │
+│  ┌──────────────┐                       ┌──────────────────────┐      │
+│  │ New Financial│                       │ Serialized Index     │      │
+│  │ Knowledge    │ ◄───────────────────  │ Stored on Disk       │      │
+│  │              │                       │                      │      │
+│  └──────────────┘                       └──────────────────────┘      │
+│                                                                       │
+└───────────────────────────────────────────────────────────────────────┘
+```
+
+#### RAG Query Process
+
+```
+┌───────────────────────────────────────────────────────────────────────┐
+│                       RAG Query Process                               │
+├───────────────────────────────────────────────────────────────────────┤
+│                                                                       │
+│  ┌──────────────┐    ┌──────────────┐    ┌──────────────────────┐     │
+│  │ User Query   │    │ all-MiniLM   │    │ FAISS Vector Search  │     │
+│  │ (e.g., fees) │ →  │ Embedding    │ →  │ (Find similar        │     │
+│  │              │    │ Model        │    │  vectors)            │     │
+│  └──────────────┘    └──────────────┘    └──────────────────────┘     │
+│                                                     │                 │
+│                                                     ▼                 │
+│  ┌──────────────────────────┐            ┌──────────────────────┐     │
+│  │ Response Generation      │            │ Top-K Most Similar   │     │
+│  │ (Format and combine      │ ◄────────  │ Knowledge Base       │     │
+│  │  retrieved information)  │            │ Entries              │     │
+│  └──────────────────────────┘            └──────────────────────┘     │
+│                │                                                      │
+│                ▼                                                      │
+│  ┌──────────────────────────┐                                         │
+│  │ Final Response to User   │                                         │
+│  └──────────────────────────┘                                         │
+│                                                                       │
+└───────────────────────────────────────────────────────────────────────┘
+```
+
+#### Key FAISS Implementation Details
+
+1. **IndexFlatL2**: We use a flat index with L2 (Euclidean) distance metric
+   - Pros: Exact search with highest accuracy
+   - Cons: Linear time complexity O(n) with the number of vectors
+
+2. **Vector Dimension**: 384 dimensions from the all-MiniLM-L6-v2 model
+
+3. **Distance Threshold**: The system uses a configurable distance threshold (currently set to 20.0) to determine relevance
+
+4. **Preprocessing**: For FAQ entries, we combine questions and answers before embedding to capture the full semantic context
+
+5. **Fallback Mechanism**: If vector search fails to find relevant entries, the system falls back to keyword-based search
+
+This architecture enables our financial assistant to quickly find the most semantically relevant information from the knowledge base, even when user queries don't exactly match the wording in our knowledge base.
 
 ## Setup and Installation
 
@@ -82,8 +181,8 @@ fin_ai_agent/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/fin_ai_agent.git
-   cd fin_ai_agent
+   git clone https://github.com/arifazim/financial_ai_agent.git
+   cd financial_ai_agent
    ```
 
 2. **Create and activate a virtual environment**
@@ -94,7 +193,7 @@ fin_ai_agent/
 
 3. **Install dependencies**
    ```bash
-   pip install -r requirements.txt
+   pip install -r packages.txt
    ```
 
 4. **Configure the application**
@@ -121,12 +220,12 @@ fin_ai_agent/
 
 1. **Build the Docker image**
    ```bash
-   docker build -t fin_ai_agent .
+   docker build -t financial_ai_agent .
    ```
 
 2. **Run with Docker**
    ```bash
-   docker run -d -p 8000:8000 --name fin_ai_agent fin_ai_agent
+   docker run -d -p 8000:8000 --name financial_ai_agent financial_ai_agent
    ```
 
 3. **Using Docker Compose**
@@ -136,7 +235,7 @@ fin_ai_agent/
 
 4. **Scaling with Docker Compose**
    ```bash
-   docker-compose up -d --scale fin_ai_agent=3
+   docker-compose up -d --scale financial_ai_agent=3
    ```
 
 ## Cloud Deployment Options
@@ -158,6 +257,17 @@ fin_ai_agent/
 
 ## Using the API
 
+### Example 
+```bash
+curl -X 'POST' \
+  'http://127.0.0.1:8000/ask' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "query": "What happens if the market crashes?",
+  "channel": "chat"
+}'
+{"response":"Here's what I found about 'What happens if the market crashes?':\n\nWe recommend a diversified long-term investment strategy. Our advisory team is available to help you adjust your portfolio as needed during market volatility.\n\nWe offer a comprehensive range of investment services including: stocks and bonds trading, mutual funds, ETFs, retirement planning (401k, IRA), wealth management, and personalized portfolio advisory services.\n\nTo start investing: 1) Create an account online or talk to an advisor, 2) Choose your investment strategy, 3) Fund your account, 4) Begin investing with our guidance.\n\nSource: FAQ"}
+```
 ### Making Requests
 
 ```bash
