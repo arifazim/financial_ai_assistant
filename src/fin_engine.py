@@ -50,8 +50,13 @@ Note: This is general information. Please consult with our financial advisors fo
 """
         }
 
-    def generate_response(self, query: str, context) -> str:
+    def generate_response(self, query: str, context, history: list = None) -> str:
         try:
+            # Prepend history to query if available
+            if history:
+                history_text = "\n".join([f"Previous Q: {h_query}\nPrevious A: {h_response}" for h_query, h_response in history])
+                query = f"{history_text}\n\nCurrent Q: {query}"
+
             # If we have context items
             if isinstance(context, list) and context:
                 # Check if the results come from vector search (will have 'score' field)
